@@ -8,6 +8,7 @@ import heapq
 import pygame
 import random
 import math
+import os
 
 from random import randint
 from ast import literal_eval as make_tuple
@@ -20,6 +21,9 @@ blockwidth = 6  # Drawing dimensions of block
 GridCols = 100
 GridRows = 100
 GameScreen = pygame.display.set_mode((GridCols*blockwidth+200,GridRows*blockwidth+34))
+
+start_x = 0
+start_y = 0
 
 cursor_x = 0
 cursor_y = 0
@@ -74,6 +78,18 @@ def makeGrid(withBlocks):
 				grid[x][y].setType('0')
 				blocked += 1
 
+def setStart():
+	# Generate Start
+	x = randint(0,GridRows)
+	y = randint(0,GridCols)
+
+	while grid[x][y].getType == '0':
+		x = randint(0,GridRows)
+		y = randint(0,GridCols)
+
+	start_x = x
+	start_y = y
+
 # Draw Grid
 def drawGrid(myGridSurface):
 	myGridSurface.fill((255,255,255))
@@ -104,7 +120,7 @@ def drawScreen(GridSurface):
 	pygame.draw.rect(GameScreen, (255,0,0), (cursor_x*blockwidth+9,cursor_y*blockwidth+9,blockwidth+2,blockwidth+2), 2)
 
 	# Draw text
-	label = myfont.render("G = New (w/blocks), B = New (wo/blocks)", 1, (0,0,0))
+	label = myfont.render("G = New (w/blocks), S = Save, L = Load", 1, (0,0,0))
 	GameScreen.blit(label, (20, blockwidth*GridRows+14))
 	
 	# Draw screen
@@ -113,6 +129,7 @@ def drawScreen(GridSurface):
 # Make and Draw Grid
 GridSurface = pygame.Surface(GameScreen.get_size())
 makeGrid(True)
+setStart()
 GridSurface = drawGrid(GridSurface)
 
 # Main Loop
@@ -130,12 +147,39 @@ while(running):
 				grid = [[GridCell('N') for y in range(GridRows)] for x in range(GridCols)]
 				makeGrid(True)
 				GridSurface = drawGrid(GridSurface)
+				setStart()
 				print "Generated new map with blocks"
-			elif event.key == pygame.K_b:
-				grid = [[GridCell('N') for y in range(GridRows)] for x in range(GridCols)]
-				makeGrid(False)
+			elif event.key == pygame.K_s:
+				# Save map: get filename
+				filename = raw_input("Save map to: ")
+				with open(os.path.join("./gen",filename),"w") as mapfile:
+					mapfile.write(str((start_x,start_y)))		# Write start
+					mapfile.write("\n")
+					
+					for y in range(len(grid[x])):				# Write each cell
+						for x in range(len(grid)):
+							mapfile.write(str(grid[x][y].getType()))
+						mapfile.write("\n")
+
+					mapfile.close()
+				print "Map saved!"
+			elif event.key == pygame.K_l:
+				# Load map: get filename
+				filename = raw_input("Load map from: ")
+				with open(os.path.join("./gen",filename),"r") as mapfile: #changed to allow using /maps folder
+					new_start = make_tuple(mapfile.readline())
+					start_x = new_start[0]
+					start_y = new_start[1]
+
+					for y in range(len(grid[x])):				# Read each cell
+						for x in range(len(grid)):
+							grid[x][y].setType(mapfile.read(1))
+						mapfile.read(1)
+
+					mapfile.close()
+				
 				GridSurface = drawGrid(GridSurface)
-				print "Generated new map without blocks"
-	
+				print "Map loaded!"
+				
 	# Draw Screen
 	drawScreen(GridSurface)
