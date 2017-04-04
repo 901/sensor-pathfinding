@@ -1,7 +1,7 @@
 '''
 CS440 Project 3
 @Authors: Aditya Geria, Lawrence Maceren
-@Description: 
+@Description:
 '''
 
 import heapq
@@ -38,13 +38,13 @@ class GridCell():
 		self.celltype = newtype
 	def getCount(self):
 		return self.count
-		
+
 # Initialize Grid
 grid = [[GridCell('N') for y in range(GridRows)] for x in range(GridCols)]
 
 # Make Random Grid
 def makeGrid(withBlocks):
-	# Highways 
+	# Highways
 	needtoblock = GridCols*GridRows*0.2
 	blocked = 0
 
@@ -54,7 +54,7 @@ def makeGrid(withBlocks):
 		if grid[x][y].getType()=='N':
 			grid[x][y].setType('H')
 			blocked += 1
-	
+
 	# Hard to Traverse
 	needtoblock = GridCols*GridRows*0.2
 	blocked = 0
@@ -65,7 +65,7 @@ def makeGrid(withBlocks):
 		if grid[x][y].getType()=='N':
 			grid[x][y].setType('T')
 			blocked += 1
-			
+
 	# Blocked cells
 	if withBlocks == True:
 		needtoblock = GridCols*GridRows*0.1
@@ -89,7 +89,7 @@ def setStart():
 
 	start_x = x
 	start_y = y
-	
+
 	return start_x,start_y
 
 # Draw Grid
@@ -123,14 +123,26 @@ def drawScreen(GridSurface):
 
 	# Draw starting point
 	pygame.draw.circle(GameScreen, (255,0,0), (start_x*blockwidth+blockwidth/2+10,start_y*blockwidth+blockwidth/2+10),blockwidth/2, 0)
-	
+
 	# Draw text
 	label = myfont.render("G = New Map, E = New Start, S = Save, L = Load", 1, (0,0,0))
 	GameScreen.blit(label, (20, blockwidth*GridRows+14))
-	
+
 	# Draw screen
 	pygame.display.update()
-	
+
+#1 = up
+#2 = down
+#3 = left
+def makeActions():
+	s = ""
+	dir = ['U', 'L', 'D', 'R']
+	for x in range(0,100):
+		rand = random.randint(0, 3)
+		s += str(dir[rand])
+	return s
+
+
 # Make and Draw Grid
 GridSurface = pygame.Surface(GameScreen.get_size())
 makeGrid(True)
@@ -174,7 +186,7 @@ while(running):
 				with open(os.path.join("./gen",filename),"w") as mapfile:
 					mapfile.write(str((start_x,start_y)))		# Write start
 					mapfile.write("\n")
-					
+
 					for y in range(len(grid[x])):				# Write each cell
 						for x in range(len(grid)):
 							mapfile.write(str(grid[x][y].getType()))
@@ -196,9 +208,9 @@ while(running):
 						mapfile.read(1)
 
 					mapfile.close()
-				
+
 				GridSurface = drawGrid(GridSurface)
 				print "Map loaded!"
-				
+
 	# Draw Screen
 	drawScreen(GridSurface)
