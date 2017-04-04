@@ -21,22 +21,22 @@ GridCols = 100
 GridRows = 100
 GameScreen = pygame.display.set_mode((GridCols*blockwidth+200,GridRows*blockwidth+34))
 
-# Initialize Grid
-grid = [['N' for y in range(GridRows)] for x in range(GridCols)]
-
 cursor_x = 0
 cursor_y = 0
 
 class GridCell():
-    def __init__(celltype):
-        self.celltype = celltype
-        self.count = 0
-    def getType(self):
-        return self.celltype
-    def getCount(self):
-        return self.count
-
-
+	def __init__(self,celltype):
+		self.celltype = celltype
+		self.count = 0
+	def getType(self):
+		return self.celltype
+	def setType(self,newtype):
+		self.celltype = newtype
+	def getCount(self):
+		return self.count
+		
+# Initialize Grid
+grid = [[GridCell('N') for y in range(GridRows)] for x in range(GridCols)]
 
 # Make Random Grid
 def makeGrid(withBlocks):
@@ -47,8 +47,8 @@ def makeGrid(withBlocks):
 	while blocked < needtoblock:
 		x = randint(0,GridCols-1)
 		y = randint(0,GridRows-1)
-		if grid[x][y]=='N':
-			grid[x][y] = 'H'
+		if grid[x][y].getType()=='N':
+			grid[x][y].setType('H')
 			blocked += 1
 	
 	# Hard to Traverse
@@ -58,8 +58,8 @@ def makeGrid(withBlocks):
 	while blocked < needtoblock:
 		x = randint(0,GridCols-1)
 		y = randint(0,GridRows-1)
-		if grid[x][y]=='N':
-			grid[x][y] = 'T'
+		if grid[x][y].getType()=='N':
+			grid[x][y].setType('T')
 			blocked += 1
 			
 	# Blocked cells
@@ -70,8 +70,8 @@ def makeGrid(withBlocks):
 		while blocked < needtoblock:
 			x = randint(0,GridCols-1)
 			y = randint(0,GridRows-1)
-			if grid[x][y]=='N':
-				grid[x][y] = '0'
+			if grid[x][y].getType()=='N':
+				grid[x][y].setType('0')
 				blocked += 1
 
 # Draw Grid
@@ -79,16 +79,17 @@ def drawGrid(myGridSurface):
 	myGridSurface.fill((255,255,255))
 	for x in range(len(grid)):
 		for y in range(len(grid[x])):
-			if grid[x][y] == '0':
+			celltype = grid[x][y].getType()
+			if celltype == '0':
 				pygame.draw.rect(myGridSurface, (40,40,40), (x*blockwidth+10,y*blockwidth+10,blockwidth,blockwidth), 0)
 				pygame.draw.rect(myGridSurface, (40,40,40), (x*blockwidth+10,y*blockwidth+10,blockwidth+1,blockwidth+1), 1)
-			elif grid[x][y] == 'N':
+			elif celltype == 'N':
 				pygame.draw.rect(myGridSurface, (255,255,255), (x*blockwidth+10,y*blockwidth+10,blockwidth,blockwidth), 0)
 				pygame.draw.rect(myGridSurface, (100,100,100), (x*blockwidth+10,y*blockwidth+10,blockwidth+1,blockwidth+1), 1)
-			elif grid[x][y] == 'T':
+			elif celltype == 'T':
 				pygame.draw.rect(myGridSurface, (200,200,200), (x*blockwidth+10,y*blockwidth+10,blockwidth,blockwidth), 0)
 				pygame.draw.rect(myGridSurface, (100,100,100), (x*blockwidth+10,y*blockwidth+10,blockwidth+1,blockwidth+1), 1)
-			elif grid[x][y] == 'H':
+			elif celltype == 'H':
 				pygame.draw.rect(myGridSurface, (130,170,255), (x*blockwidth+10,y*blockwidth+10,blockwidth,blockwidth), 0)
 				pygame.draw.rect(myGridSurface, (100,100,100), (x*blockwidth+10,y*blockwidth+10,blockwidth+1,blockwidth+1), 1)
 
@@ -126,12 +127,12 @@ while(running):
 			if event.key == pygame.K_ESCAPE:
 				running = False
 			elif event.key == pygame.K_g:
-				grid = [['N' for y in range(GridRows)] for x in range(GridCols)]
+				grid = [[GridCell('N') for y in range(GridRows)] for x in range(GridCols)]
 				makeGrid(True)
 				GridSurface = drawGrid(GridSurface)
 				print "Generated new map with blocks"
 			elif event.key == pygame.K_b:
-				grid = [['N' for y in range(GridRows)] for x in range(GridCols)]
+				grid = [[GridCell('N') for y in range(GridRows)] for x in range(GridCols)]
 				makeGrid(False)
 				GridSurface = drawGrid(GridSurface)
 				print "Generated new map without blocks"
