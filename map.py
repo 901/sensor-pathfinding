@@ -89,6 +89,8 @@ def setStart():
 
 	start_x = x
 	start_y = y
+	
+	return start_x,start_y
 
 # Draw Grid
 def drawGrid(myGridSurface):
@@ -119,8 +121,11 @@ def drawScreen(GridSurface):
 	GameScreen.blit(GridSurface,(0,0))
 	pygame.draw.rect(GameScreen, (255,0,0), (cursor_x*blockwidth+9,cursor_y*blockwidth+9,blockwidth+2,blockwidth+2), 2)
 
+	# Draw starting point
+	pygame.draw.circle(GameScreen, (255,0,0), (start_x*blockwidth+blockwidth/2+10,start_y*blockwidth+blockwidth/2+10),blockwidth/2, 0)
+	
 	# Draw text
-	label = myfont.render("G = New (w/blocks), S = Save, L = Load", 1, (0,0,0))
+	label = myfont.render("G = New Map, E = New Start, S = Save, L = Load", 1, (0,0,0))
 	GameScreen.blit(label, (20, blockwidth*GridRows+14))
 	
 	# Draw screen
@@ -129,7 +134,7 @@ def drawScreen(GridSurface):
 # Make and Draw Grid
 GridSurface = pygame.Surface(GameScreen.get_size())
 makeGrid(True)
-setStart()
+start_x,start_y = setStart()
 GridSurface = drawGrid(GridSurface)
 
 # Main Loop
@@ -147,8 +152,10 @@ while(running):
 				grid = [[GridCell('N') for y in range(GridRows)] for x in range(GridCols)]
 				makeGrid(True)
 				GridSurface = drawGrid(GridSurface)
-				setStart()
+				start_x,start_y = setStart()
 				print "Generated new map with blocks"
+			elif event.key == pygame.K_e:
+				start_x,start_y = setStart()
 			elif event.key == pygame.K_s:
 				# Save map: get filename
 				filename = raw_input("Save map to: ")
