@@ -27,6 +27,17 @@ grid = [['N' for y in range(GridRows)] for x in range(GridCols)]
 cursor_x = 0
 cursor_y = 0
 
+class GridCell():
+    def __init__(celltype):
+        self.celltype = celltype
+        self.count = 0
+    def getType(self):
+        return self.celltype
+    def getCount(self):
+        return self.count
+
+
+
 # Make Random Grid
 def makeGrid(withBlocks):
 	# Highways 
