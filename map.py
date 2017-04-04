@@ -75,7 +75,7 @@ def makeGrid(withBlocks):
 			x = randint(0,GridCols-1)
 			y = randint(0,GridRows-1)
 			if grid[x][y].getType()=='N':
-				grid[x][y].setType('0')
+				grid[x][y].setType('B')
 				blocked += 1
 
 def setStart():
@@ -83,7 +83,7 @@ def setStart():
 	x = randint(0,GridRows)
 	y = randint(0,GridCols)
 
-	while grid[x][y].getType == '0':
+	while grid[x][y].getType == 'B':
 		x = randint(0,GridRows)
 		y = randint(0,GridCols)
 
@@ -98,7 +98,7 @@ def drawGrid(myGridSurface):
 	for x in range(len(grid)):
 		for y in range(len(grid[x])):
 			celltype = grid[x][y].getType()
-			if celltype == '0':
+			if celltype == 'B':
 				pygame.draw.rect(myGridSurface, (40,40,40), (x*blockwidth+10,y*blockwidth+10,blockwidth,blockwidth), 0)
 				pygame.draw.rect(myGridSurface, (40,40,40), (x*blockwidth+10,y*blockwidth+10,blockwidth+1,blockwidth+1), 1)
 			elif celltype == 'N':
@@ -156,6 +156,18 @@ while(running):
 				print "Generated new map with blocks"
 			elif event.key == pygame.K_e:
 				start_x,start_y = setStart()
+			elif event.key == pygame.K_UP:
+				if cursor_y-1 >= 0:
+					cursor_y -= 1
+			elif event.key == pygame.K_LEFT:
+				if cursor_x-1 >= 0:
+					cursor_x -= 1
+			elif event.key == pygame.K_RIGHT:
+				if cursor_x+1 < GridCols:
+					cursor_x += 1
+			elif event.key == pygame.K_DOWN:
+				if cursor_y+1 < GridRows:
+					cursor_y += 1
 			elif event.key == pygame.K_s:
 				# Save map: get filename
 				filename = raw_input("Save map to: ")
