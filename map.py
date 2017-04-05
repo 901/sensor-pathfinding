@@ -144,131 +144,167 @@ def makeActions():
 		s += str(dir[rand])
 	return s
 
-def ground_truth_data1(s, agentx, agenty):
+def ground_truth_data1(s):
+	global agentx, agenty
+	print len(s)
 	print "agent x is " + str(agentx) + " agent y is " + str(agenty)
 	rand = 0
 	sensor = ""
 	celltype = ""
-	for c in s:
-		#print "|"+c,
-		drawScreen(GridSurface)
-		if c == 'U':
-			rand = random.randint(0,100)
-			#move according to 90/10 probability
-			if rand <= 90:
-				try:
-					if grid[agentx][agenty-1].getType() != 'B':
-						agenty -= 1
-				except IndexError:
-					agenty = agenty
-			celltype = grid[agentx][agenty].getType()
-			rand = random.randint(0,100)
-			if rand <= 90:
-				sensor += celltype
-			elif rand > 90 and rand <= 95:
-				if celltype == 'N':
-					sensor += 'H'
-				elif celltype == 'T':
-					sensor += 'N'
-				else:
-					sensor += 'T'
-			else:
-				if celltype == 'N':
-					sensor += 'T'
-				elif celltype == 'T':
-					sensor += 'H'
-				else:
-					sensor += "N"
-		elif c == 'D':
-			rand = random.randint(0,100)
-			#move according to 90/10 probability
-			if rand <= 90:
-				try:
-					if grid[agentx][agenty+1].getType() != 'B':
-						agenty += 1
-				except IndexError:
-					agenty = agenty
-			celltype = grid[agentx][agenty].getType()
-			rand = random.randint(0,100)
-			if rand <= 90:
-				sensor += celltype
-			elif rand > 90 and rand <= 95:
-				if celltype == 'N':
-					sensor += 'H'
-				elif celltype == 'T':
-					sensor += 'N'
-				else:
-					sensor += 'T'
-			else:
-				if celltype == 'N':
-					sensor += 'T'
-				elif celltype == 'T':
-					sensor += 'H'
-				else:
-					sensor += "N"
-		elif c == 'L':
-			rand = random.randint(0,100)
-			#move according to 90/10 probability
-			if rand <= 90:
-				try:
-					if grid[agentx-1][agenty].getType() != 'B':
-						agentx -= 1
-				except IndexError:
+	with open("ground_truth.txt", "w") as f:
+		f.write(str(agentx) + "," + str(agenty) + "\n")
+		for c in s:
+			print c,
+			#time.sleep(0.5)
+			if c == 'U':
+				rand = random.randint(1,100)
+				#move according to 90/10 probability
+				if rand <= 90:
+					try:
+						if grid[agentx][agenty-1].getType() != 'B':
+							agenty -= 1
+							f.write(str(agentx) + "," + str(agenty))
+							print "agent x is " + str(agentx) + " agent y is " + str(agenty)
+						else:
+							f.write(str(agentx) + "," + str(agenty))
+					except IndexError:
 						agentx = agentx
-			celltype = grid[agentx][agenty].getType()
-			rand = random.randint(0,100)
-			if rand <= 90:
-				sensor += celltype
-			elif rand > 90 and rand <= 95:
-				if celltype == 'N':
-					sensor += 'H'
-				elif celltype == 'T':
-					sensor += 'N'
 				else:
-					sensor += 'T'
+					f.write(str(agentx) + "," + str(agenty))
+				celltype = grid[agentx][agenty].getType()
+				rand = random.randint(1,100)
+				if rand <= 90:
+					sensor += celltype
+				elif rand > 90 and rand <= 95:
+					if celltype == 'N':
+						sensor += 'H'
+					elif celltype == 'T':
+						sensor += 'N'
+					else:
+						sensor += 'T'
+				else:
+					if celltype == 'N':
+						sensor += 'T'
+					elif celltype == 'T':
+						sensor += 'H'
+					else:
+						sensor += "N"
+			elif c == 'D':
+				rand = random.randint(1,100)
+				#move according to 90/10 probability
+				if rand <= 90:
+					try:
+						if grid[agentx][agenty+1].getType() != 'B':
+							agenty += 1
+							f.write(str(agentx) + "," + str(agenty))
+							print "agent x is " + str(agentx) + " agent y is " + str(agenty)
+						else:
+							f.write(str(agentx) + "," + str(agenty))
+					except IndexError:
+						agentx = agentx
+				else:
+					f.write(str(agentx) + "," + str(agenty))
+				celltype = grid[agentx][agenty].getType()
+				rand = random.randint(1,100)
+				if rand <= 90:
+					sensor += celltype
+				elif rand > 90 and rand <= 95:
+					if celltype == 'N':
+						sensor += 'H'
+					elif celltype == 'T':
+						sensor += 'N'
+					else:
+						sensor += 'T'
+				else:
+					if celltype == 'N':
+						sensor += 'T'
+					elif celltype == 'T':
+						sensor += 'H'
+					else:
+						sensor += "N"
+			elif c == 'L':
+				rand = random.randint(1,100)
+				#move according to 90/10 probability
+				if rand <= 90:
+					try:
+						if grid[agentx-1][agenty].getType() != 'B':
+							agentx -= 1
+							f.write(str(agentx) + "," + str(agenty))
+							print "agent x is " + str(agentx) + " agent y is " + str(agenty)
+						else:
+							f.write(str(agentx) + "," + str(agenty))
+					except IndexError:
+							agentx = agentx
+				else:
+					f.write(str(agentx) + "," + str(agenty))
+				celltype = grid[agentx][agenty].getType()
+				rand = random.randint(1,100)
+				if rand <= 90:
+					sensor += celltype
+				elif rand > 90 and rand <= 95:
+					if celltype == 'N':
+						sensor += 'H'
+					elif celltype == 'T':
+						sensor += 'N'
+					else:
+						sensor += 'T'
+				else:
+					if celltype == 'N':
+						sensor += 'T'
+					elif celltype == 'T':
+						sensor += 'H'
+					else:
+						sensor += "N"
+			elif c == 'R':
+				rand = random.randint(1,100)
+				#move according to 90/10 probability
+				if rand <= 90:
+					try:
+						if grid[agentx+1][agenty].getType() != 'B':
+							agentx += 1
+							f.write(str(agentx) + "," + str(agenty))
+							print "agent x is " + str(agentx) + " agent y is " + str(agenty)
+						else:
+							f.write(str(agentx) + "," + str(agenty))
+					except IndexError:
+						agentx = agentx
+				else:
+					f.write(str(agentx) + "," + str(agenty))
+				celltype = grid[agentx][agenty].getType()
+				rand = random.randint(1,100)
+				if rand <= 90:
+					sensor += celltype
+				elif rand > 90 and rand <= 95:
+					if celltype == 'N':
+						sensor += 'H'
+					elif celltype == 'T':
+						sensor += 'N'
+					else:
+						sensor += 'T'
+				else:
+					if celltype == 'N':
+						sensor += 'T'
+					elif celltype == 'T':
+						sensor += 'H'
+					else:
+						sensor += "N"
 			else:
-				if celltype == 'N':
-					sensor += 'T'
-				elif celltype == 'T':
-					sensor += 'H'
-				else:
-					sensor += "N"
-		elif c == 'R':
-			rand = random.randint(0,100)
-			#move according to 90/10 probability
-			if rand <= 90:
-				try:
-					if grid[agentx+1][agenty].getType() != 'B':
-						agentx += 1
-				except IndexError:
-					agentx = agentx
-			celltype = grid[agentx][agenty].getType()
-			rand = random.randint(0,100)
-			if rand <= 90:
-				sensor += celltype
-			elif rand > 90 and rand <= 95:
-				if celltype == 'N':
-					sensor += 'H'
-				elif celltype == 'T':
-					sensor += 'N'
-				else:
-					sensor += 'T'
-			else:
-				if celltype == 'N':
-					sensor += 'T'
-				elif celltype == 'T':
-					sensor += 'H'
-				else:
-					sensor += "N"
-		else:
-			print "Came across unknown value, exiting"
-			exit(0)
-		time.sleep(1)
+				print "Came across unknown value, exiting"
+				exit(0)
+			drawScreen(GridSurface)
+			f.write("\n")
 
+		f.write("Transition data:\n")
+		for c in s:
+			f.write(c+"\n")
+		f.write("Sensor data:\n")
+		for c in sensor:
+			f.write(c+"\n")
 	drawScreen(GridSurface)
 	print "agent x is " + str(agentx) + " agent y is " + str(agenty)
 	print sensor
 	print len(sensor)
+	return agentx, agenty
 
 
 
@@ -343,7 +379,7 @@ while(running):
 			elif event.key == pygame.K_c:
 				s = makeActions()
 				print "agent x is " + str(agentx) + " agent y is " + str(agenty)
-				ground_truth_data1(s, agentx, agenty)
+				agentx, agenty = ground_truth_data1(s)
 				GridSurface = drawGrid(GridSurface)
 
 	# Draw Screen
