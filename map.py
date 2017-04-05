@@ -161,7 +161,7 @@ def ground_truth_data1(s):
 				#move according to 90/10 probability
 				if rand <= 90:
 					try:
-						if grid[agentx][agenty-1].getType() != 'B':
+						if agenty-1 >= 0 and grid[agentx][agenty-1].getType() != 'B':		# Check for block or out of bounds
 							agenty -= 1
 							f.write(str(agentx) + "," + str(agenty))
 							print "agent x is " + str(agentx) + " agent y is " + str(agenty)
@@ -194,7 +194,7 @@ def ground_truth_data1(s):
 				#move according to 90/10 probability
 				if rand <= 90:
 					try:
-						if grid[agentx][agenty+1].getType() != 'B':
+						if agenty+1 < GridRows and grid[agentx][agenty+1].getType() != 'B':		# Check for block or out of bounds:
 							agenty += 1
 							f.write(str(agentx) + "," + str(agenty))
 							print "agent x is " + str(agentx) + " agent y is " + str(agenty)
@@ -227,7 +227,7 @@ def ground_truth_data1(s):
 				#move according to 90/10 probability
 				if rand <= 90:
 					try:
-						if grid[agentx-1][agenty].getType() != 'B':
+						if agentx-1 >= 0 and grid[agentx-1][agenty].getType() != 'B':		# Check for block or out of bounds:
 							agentx -= 1
 							f.write(str(agentx) + "," + str(agenty))
 							print "agent x is " + str(agentx) + " agent y is " + str(agenty)
@@ -260,7 +260,7 @@ def ground_truth_data1(s):
 				#move according to 90/10 probability
 				if rand <= 90:
 					try:
-						if grid[agentx+1][agenty].getType() != 'B':
+						if agentx+1 < GridCols and grid[agentx+1][agenty].getType() != 'B':		# Check for block or out of bounds
 							agentx += 1
 							f.write(str(agentx) + "," + str(agenty))
 							print "agent x is " + str(agentx) + " agent y is " + str(agenty)
