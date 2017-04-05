@@ -5,6 +5,7 @@ CS440 Project 3
 '''
 
 import heapq
+import time
 import pygame
 import random
 import math
@@ -80,12 +81,12 @@ def makeGrid(withBlocks):
 
 def setStart():
 	# Generate Start
-	x = randint(0,GridRows)
-	y = randint(0,GridCols)
+	x = randint(0,GridRows-1)
+	y = randint(0,GridCols-1)
 
 	while grid[x][y].getType == 'B':
-		x = randint(0,GridRows)
-		y = randint(0,GridCols)
+		x = randint(0,GridRows-1)
+		y = randint(0,GridCols-1)
 
 	agentx = x
 	agenty = y
@@ -134,6 +135,7 @@ def drawScreen(GridSurface):
 #1 = up
 #2 = down
 #3 = left
+#4 = right
 def makeActions():
 	s = ""
 	dir = ['U', 'L', 'D', 'R']
@@ -141,6 +143,134 @@ def makeActions():
 		rand = random.randint(0, 3)
 		s += str(dir[rand])
 	return s
+
+def ground_truth_data1(s, agentx, agenty):
+	print "agent x is " + str(agentx) + " agent y is " + str(agenty)
+	rand = 0
+	sensor = ""
+	celltype = ""
+	for c in s:
+		#print "|"+c,
+		drawScreen(GridSurface)
+		if c == 'U':
+			rand = random.randint(0,100)
+			#move according to 90/10 probability
+			if rand <= 90:
+				try:
+					if grid[agentx][agenty-1].getType() != 'B':
+						agenty -= 1
+				except IndexError:
+					agenty = agenty
+			celltype = grid[agentx][agenty].getType()
+			rand = random.randint(0,100)
+			if rand <= 90:
+				sensor += celltype
+			elif rand > 90 and rand <= 95:
+				if celltype == 'N':
+					sensor += 'H'
+				elif celltype == 'T':
+					sensor += 'N'
+				else:
+					sensor += 'T'
+			else:
+				if celltype == 'N':
+					sensor += 'T'
+				elif celltype == 'T':
+					sensor += 'H'
+				else:
+					sensor += "N"
+		elif c == 'D':
+			rand = random.randint(0,100)
+			#move according to 90/10 probability
+			if rand <= 90:
+				try:
+					if grid[agentx][agenty+1].getType() != 'B':
+						agenty += 1
+				except IndexError:
+					agenty = agenty
+			celltype = grid[agentx][agenty].getType()
+			rand = random.randint(0,100)
+			if rand <= 90:
+				sensor += celltype
+			elif rand > 90 and rand <= 95:
+				if celltype == 'N':
+					sensor += 'H'
+				elif celltype == 'T':
+					sensor += 'N'
+				else:
+					sensor += 'T'
+			else:
+				if celltype == 'N':
+					sensor += 'T'
+				elif celltype == 'T':
+					sensor += 'H'
+				else:
+					sensor += "N"
+		elif c == 'L':
+			rand = random.randint(0,100)
+			#move according to 90/10 probability
+			if rand <= 90:
+				try:
+					if grid[agentx-1][agenty].getType() != 'B':
+						agentx -= 1
+				except IndexError:
+						agentx = agentx
+			celltype = grid[agentx][agenty].getType()
+			rand = random.randint(0,100)
+			if rand <= 90:
+				sensor += celltype
+			elif rand > 90 and rand <= 95:
+				if celltype == 'N':
+					sensor += 'H'
+				elif celltype == 'T':
+					sensor += 'N'
+				else:
+					sensor += 'T'
+			else:
+				if celltype == 'N':
+					sensor += 'T'
+				elif celltype == 'T':
+					sensor += 'H'
+				else:
+					sensor += "N"
+		elif c == 'R':
+			rand = random.randint(0,100)
+			#move according to 90/10 probability
+			if rand <= 90:
+				try:
+					if grid[agentx+1][agenty].getType() != 'B':
+						agentx += 1
+				except IndexError:
+					agentx = agentx
+			celltype = grid[agentx][agenty].getType()
+			rand = random.randint(0,100)
+			if rand <= 90:
+				sensor += celltype
+			elif rand > 90 and rand <= 95:
+				if celltype == 'N':
+					sensor += 'H'
+				elif celltype == 'T':
+					sensor += 'N'
+				else:
+					sensor += 'T'
+			else:
+				if celltype == 'N':
+					sensor += 'T'
+				elif celltype == 'T':
+					sensor += 'H'
+				else:
+					sensor += "N"
+		else:
+			print "Came across unknown value, exiting"
+			exit(0)
+		time.sleep(1)
+
+	drawScreen(GridSurface)
+	print "agent x is " + str(agentx) + " agent y is " + str(agenty)
+	print sensor
+	print len(sensor)
+
+
 
 # Make and Draw Grid
 GridSurface = pygame.Surface(GameScreen.get_size())
@@ -210,6 +340,11 @@ while(running):
 
 				GridSurface = drawGrid(GridSurface)
 				print "Map loaded!"
+			elif event.key == pygame.K_c:
+				s = makeActions()
+				print "agent x is " + str(agentx) + " agent y is " + str(agenty)
+				ground_truth_data1(s, agentx, agenty)
+				GridSurface = drawGrid(GridSurface)
 
 	# Draw Screen
 	drawScreen(GridSurface)
