@@ -326,7 +326,29 @@ def forwardAlgorithm(location_truth,transition,sensing):
 	
 	t = 1
 	while t <= 100:
-		
+		# Iterate grid
+		for y in range(GridRows):
+			for x in range(GridCols):
+				# Observation model - probability of this sensing data
+				# given this state
+				
+				celltype = grid[x][y].getType()
+				
+				if celltype == sensing[t]:		# Matches with 90% chance
+					obs_model = 0.9
+				else:
+					obs_model = 0.1
+				
+				total_sum = 0
+				
+				# Sum all the old readings
+				for t_old in range(0,t):
+					# Calculate transition model for t_old
+					
+					
+					# Calculate prior belief for t_old
+					
+					# Multiply together, add to total_sum
 	
 	return heatmap
 
