@@ -152,7 +152,10 @@ def ground_truth_data1(s):
 	sensor = ""
 	celltype = ""
 	with open("ground_truth.txt", "w") as f:
-		f.write(str(agentx) + "," + str(agenty) + "\n")
+		# Write start
+		f.write("(" + str(agentx) + "," + str(agenty) + ")\n")
+		
+		# Iterate
 		for c in s:
 			print c,
 			#time.sleep(0.5)
@@ -163,14 +166,15 @@ def ground_truth_data1(s):
 					try:
 						if agenty-1 >= 0 and grid[agentx][agenty-1].getType() != 'B':		# Check for block or out of bounds
 							agenty -= 1
-							f.write(str(agentx) + "," + str(agenty))
+							#f.write(str(agentx) + "," + str(agenty))
 							print "agent x is " + str(agentx) + " agent y is " + str(agenty)
-						else:
-							f.write(str(agentx) + "," + str(agenty))
+						#else:
+							#f.write(str(agentx) + "," + str(agenty))
+							#agentx = agentx
 					except IndexError:
 						agentx = agentx
-				else:
-					f.write(str(agentx) + "," + str(agenty))
+				#else:
+					#f.write(str(agentx) + "," + str(agenty))
 				celltype = grid[agentx][agenty].getType()
 				rand = random.randint(1,100)
 				if rand <= 90:
@@ -196,14 +200,15 @@ def ground_truth_data1(s):
 					try:
 						if agenty+1 < GridRows and grid[agentx][agenty+1].getType() != 'B':		# Check for block or out of bounds:
 							agenty += 1
-							f.write(str(agentx) + "," + str(agenty))
+							#f.write(str(agentx) + "," + str(agenty))
 							print "agent x is " + str(agentx) + " agent y is " + str(agenty)
-						else:
-							f.write(str(agentx) + "," + str(agenty))
+						#else:
+							#f.write(str(agentx) + "," + str(agenty))
+							#agentx = agentx
 					except IndexError:
 						agentx = agentx
-				else:
-					f.write(str(agentx) + "," + str(agenty))
+				#else:
+					#f.write(str(agentx) + "," + str(agenty))
 				celltype = grid[agentx][agenty].getType()
 				rand = random.randint(1,100)
 				if rand <= 90:
@@ -229,14 +234,14 @@ def ground_truth_data1(s):
 					try:
 						if agentx-1 >= 0 and grid[agentx-1][agenty].getType() != 'B':		# Check for block or out of bounds:
 							agentx -= 1
-							f.write(str(agentx) + "," + str(agenty))
+							#f.write(str(agentx) + "," + str(agenty))
 							print "agent x is " + str(agentx) + " agent y is " + str(agenty)
-						else:
-							f.write(str(agentx) + "," + str(agenty))
+						#else:
+							#f.write(str(agentx) + "," + str(agenty))
 					except IndexError:
 							agentx = agentx
-				else:
-					f.write(str(agentx) + "," + str(agenty))
+				#else:
+					#f.write(str(agentx) + "," + str(agenty))
 				celltype = grid[agentx][agenty].getType()
 				rand = random.randint(1,100)
 				if rand <= 90:
@@ -262,14 +267,14 @@ def ground_truth_data1(s):
 					try:
 						if agentx+1 < GridCols and grid[agentx+1][agenty].getType() != 'B':		# Check for block or out of bounds
 							agentx += 1
-							f.write(str(agentx) + "," + str(agenty))
+							#f.write(str(agentx) + "," + str(agenty))
 							print "agent x is " + str(agentx) + " agent y is " + str(agenty)
-						else:
-							f.write(str(agentx) + "," + str(agenty))
+						#else:
+							#f.write(str(agentx) + "," + str(agenty))
 					except IndexError:
 						agentx = agentx
-				else:
-					f.write(str(agentx) + "," + str(agenty))
+				#else:
+					#f.write(str(agentx) + "," + str(agenty))
 				celltype = grid[agentx][agenty].getType()
 				rand = random.randint(1,100)
 				if rand <= 90:
@@ -291,8 +296,9 @@ def ground_truth_data1(s):
 			else:
 				print "Came across unknown value, exiting"
 				exit(0)
+			f.write("(" + str(agentx) + "," + str(agenty) + ")\n")
 			drawScreen(GridSurface)
-			f.write("\n")
+			#f.write("\n")
 
 		f.write("Transition data:\n")
 		for c in s:
@@ -381,6 +387,21 @@ while(running):
 				print "agent x is " + str(agentx) + " agent y is " + str(agenty)
 				agentx, agenty = ground_truth_data1(s)
 				GridSurface = drawGrid(GridSurface)
+			elif event.key == pygame.K_v:		# load ground truth file
+				# Load map: get filename
+				filename = raw_input("Load truth file from: ")
+				#with open(os.path.join("./gen",filename),"r") as mapfile: #changed to allow using /maps folder
+				with open(filename,"r") as mapfile: #changed to allow using /maps folder
+					new_start = make_tuple(mapfile.readline())
+					agentx = new_start[0]
+					agenty = new_start[1]
+
+					for y in range(len(grid[x])):				# Read each cell
+						for x in range(len(grid)):
+							grid[x][y].setType(mapfile.read(1))
+						mapfile.read(1)
+
+					mapfile.close()
 
 	# Draw Screen
 	drawScreen(GridSurface)
