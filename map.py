@@ -45,6 +45,8 @@ grid = [[GridCell('N') for y in range(GridRows)] for x in range(GridCols)]
 
 # Make Random Grid
 def makeGrid(withBlocks):
+	heatmap = [[0 for y in range(GridRows)] for x in range(GridCols)]
+	
 	# Highways
 	needtoblock = GridCols*GridRows*0.2
 	blocked = 0
@@ -78,6 +80,9 @@ def makeGrid(withBlocks):
 			if grid[x][y].getType()=='N':
 				grid[x][y].setType('B')
 				blocked += 1
+
+def initHeatMap():
+	return [[[1/(GridCols * GridRows) for y in range(GridRows)] for x in range(GridCols)] for t in range(101)]
 
 def setStart():
 	# Generate Start
@@ -307,18 +312,36 @@ def ground_truth_data1(s):
 		for c in sensor:
 			f.write(c+"\n")
 	drawScreen(GridSurface)
-	print "agent x is " + str(agentx) + " agent y is " + str(agenty)
+	print "FINAL: agent x is " + str(agentx) + " agent y is " + str(agenty)
 	print sensor
 	print len(sensor)
 	return agentx, agenty
 
-
+# Forward Algorithm (Question D)
+def forwardAlgorithm(location_truth,transition,sensing):
+	heatmap = initHeatMap()
+	
+	# t = 0 is the initial heatmap, where every cell has an equal probability
+	# heatmap[t=1] is after the first action and first sensing
+	
+	t = 1
+	while t <= 100:
+		
+	
+	return heatmap
 
 # Make and Draw Grid
 GridSurface = pygame.Surface(GameScreen.get_size())
 makeGrid(True)
 agentx,agenty = setStart()
 GridSurface = drawGrid(GridSurface)
+
+heatmap = initHeatMap()
+
+# Initialize truth data
+location_truth = []
+transition_truth = []
+sensing_truth = []
 
 # Main Loop
 running = True
@@ -336,6 +359,11 @@ while(running):
 				makeGrid(True)
 				GridSurface = drawGrid(GridSurface)
 				agentx,agenty = setStart()
+				
+				location_truth = []
+				transition_truth = []
+				sensing_truth = []
+				
 				print "Generated new map with blocks"
 			elif event.key == pygame.K_e:
 				agentx,agenty = setStart()
@@ -369,7 +397,7 @@ while(running):
 				# Load map: get filename
 				filename = raw_input("Load map from: ")
 				with open(os.path.join("./gen",filename),"r") as mapfile: #changed to allow using /maps folder
-					new_start = make_tuple(mapfile.readline())
+					true_start = make_tuple(mapfile.readline())
 					agentx = new_start[0]
 					agenty = new_start[1]
 
@@ -379,7 +407,13 @@ while(running):
 						mapfile.read(1)
 
 					mapfile.close()
-
+				
+				location_truth = []
+				transition_truth = []
+				sensing_truth = []
+				
+				heatmap = initHeatMap()
+				
 				GridSurface = drawGrid(GridSurface)
 				print "Map loaded!"
 			elif event.key == pygame.K_c:
@@ -387,21 +421,43 @@ while(running):
 				print "agent x is " + str(agentx) + " agent y is " + str(agenty)
 				agentx, agenty = ground_truth_data1(s)
 				GridSurface = drawGrid(GridSurface)
-			elif event.key == pygame.K_v:		# load ground truth file
+			elif event.key == pygame.K_t:		# load ground truth file
+				location_truth = []
+				transition_truth = []
+				sensing_truth = []
+				heatmap = initHeatMap()
+				
 				# Load map: get filename
 				filename = raw_input("Load truth file from: ")
 				#with open(os.path.join("./gen",filename),"r") as mapfile: #changed to allow using /maps folder
-				with open(filename,"r") as mapfile: #changed to allow using /maps folder
-					new_start = make_tuple(mapfile.readline())
-					agentx = new_start[0]
-					agenty = new_start[1]
-
-					for y in range(len(grid[x])):				# Read each cell
-						for x in range(len(grid)):
-							grid[x][y].setType(mapfile.read(1))
-						mapfile.read(1)
-
-					mapfile.close()
+				with open(filename,"r") as truthfile: #changed to allow using /maps folder
+					new_start = make_tuple(truthfile.readline())
+					agentx = -1
+					agenty = -1
+					
+					location_truth.append(true_start)
+					# Get true location data
+					for y in range(0,100):
+						location_truth.append(make_tuple(truthfile.readline()))
+					
+					truthfile.readline()			# Skip title of section
+					
+					transition_truth.append("NA")
+					# Get true transition data
+					for y in range(0,100):				# Get true location data
+						transition_truth.append(truthfile.readline())
+					
+					truthfile.readline()			# Skip title of section
+					
+					sensing_truth.append("NA")
+					# Get true sensing data
+					for y in range(0,100):				# Get true location data
+						sensing_truth.append(truthfile.readline())
+					
+					truthfile.close()
+			elif event.key == pygame.K_h:		# run truth file/generate heat map
+				#heatmap = initHeatMap()
+				heatmap = forwardAlgorithm(location_truth,transition_truth,sensing_truth)
 
 	# Draw Screen
 	drawScreen(GridSurface)
