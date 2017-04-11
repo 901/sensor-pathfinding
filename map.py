@@ -424,6 +424,43 @@ def forwardAlgorithm(transition,sensing):
 		t += 1
 	return heatmap
 
+# Error Calculation for Filtering (Question E)
+def error_filtering(heatmap,location):
+	print "Check error for filtering"
+	
+	with open("error_filtering.txt", "w") as f:
+		
+		# Take readings, ignore first 5
+		t = 6
+		while t <= 100:
+			# Find probability of cell where agent is actually located
+			true_x = location[t][0]
+			true_y = location[t][1]
+			
+			prob_true_location = heatmap[t][true_x][true_y]
+			
+			# Find cell with max probability
+			max_prob = 0
+			max_x = 0
+			max_y = 0
+			for y in range(GridRows):
+				for x in range(GridCols):
+					if heatmap[t][x][y] > max_prob:
+						max_x = x
+						max_y = y
+						max_prob = heatmap[t][x][y]
+				
+			# Calculate distance (euclidean)
+			distance = math.sqrt((true_x - max_x)**2+(true_y - max_y)**2)
+			
+			# Write to file (t, distance, probability) 
+			f.write(str(t) + "," + str(distance) + "," + str(prob_true_location) + "\n")
+			t += 1
+		
+		f.close()
+	
+	print "Wrote error to file"
+
 # Make and Draw Grid
 GridSurface = pygame.Surface(GameScreen.get_size())
 makeGrid(True)
@@ -546,6 +583,7 @@ while(running):
 					start_x = new_start[0]
 					start_y = new_start[1]
 					
+					location_truth.append(new_start)
 					# Get true location data
 					for y in range(0,100):
 						location_truth.append(make_tuple(truthfile.readline()))
@@ -579,6 +617,8 @@ while(running):
 				test_time = 1
 				HeatSurface = drawHeatmap(HeatSurface,GridSurface,heatmap[test_time],test_time)
 				print "Heat maps generated"
+			elif event.key == pygame.K_q:		# get error calculation for filtering (Question E)
+				myerror = error_filtering(heatmap,location_truth)
 
 	# Draw Screen
 	drawScreen(GridSurface,HeatSurface,test_time,location_truth,transition_truth,sensing_truth,start_x,start_y,goal_x,goal_y)
