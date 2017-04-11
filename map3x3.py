@@ -575,7 +575,7 @@ while(running):
 				# Load map: get filename
 				filename = raw_input("Load map from: ")
 				with open(os.path.join("./gen",filename),"r") as mapfile: #changed to allow using /maps folder
-					true_start = make_tuple(mapfile.readline())
+					new_start = make_tuple(mapfile.readline())
 					agentx = new_start[0]
 					agenty = new_start[1]
 

@@ -18,9 +18,9 @@ from ast import literal_eval as make_tuple
 pygame.init()
 myfont = pygame.font.SysFont("monospace", 15)
 
-blockwidth = 60  # Drawing dimensions of block
-GridCols = 3
-GridRows = 3
+blockwidth = 8  # Drawing dimensions of block
+GridCols = 100
+GridRows = 100
 GameScreen = pygame.display.set_mode((GridCols*blockwidth+200,GridRows*blockwidth+34))
 
 agentx = 0
@@ -575,7 +575,7 @@ while(running):
 				# Load map: get filename
 				filename = raw_input("Load map from: ")
 				with open(os.path.join("./gen",filename),"r") as mapfile: #changed to allow using /maps folder
-					true_start = make_tuple(mapfile.readline())
+					new_start = make_tuple(mapfile.readline())
 					agentx = new_start[0]
 					agenty = new_start[1]
 
