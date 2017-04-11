@@ -83,7 +83,7 @@ def makeGrid(withBlocks):
 
 # Initialize heat map
 def initHeatMap():
-	return [[[0.9 for y in range(GridRows)] for x in range(GridCols)] for t in range(101)]
+	return [[[0.5 for y in range(GridRows)] for x in range(GridCols)] for t in range(101)]
 
 def setStart():
 	# Generate Start
@@ -430,28 +430,30 @@ def forwardAlgorithm(transition,sensing):
 				# Calculate transition model
 				# Probability of ending in state s' given action a in state s
 				if new_x < 0 or new_y < 0 or new_x >= GridCols or new_y >= GridRows:		# Out of bounds
-					newprob = 1
+					newprob = 0
 				elif grid[new_x][new_y].getType() == 'B': # Hitting wall
-					newprob = 1
+					newprob = 0
 				elif grid[x][y].getType() == 'B':		# On a wall
 					heatmap[t][x][y] = 0
+					continue
 				else:	# Normal cell
-					#print "Normal cell"
-					newprob = 0.9
-					#heatmap[t][x][y] = 0.1 * heatmap[t-1][x][y]
+					#If neighboring cell
+					newprob = 0.1
+					heatmap[t][new_x][new_y] = 0.9 * heatmap[t-1][x][y]
 				
 				# Apply prior belief
+				newprob_old = new_prob
 				newprob_not = 1 - newprob
 				
-				newprob = newprob * oldprob + newprob_not * oldprob_not
-				newprob_not = newprob_not * oldprob + (1 - newprob_not) * oldprob_not
+				newprob = newprob_old * oldprob + newprob_not * oldprob_not
+				newprob_not = newprob_not * oldprob + newprob_old * oldprob_not
 				
 				# Multiply by observation model
 				newprob = obs * newprob
 				newprob_not = (1 - obs) * newprob_not
 				
 				#print "Old: <" + str(oldprob) + "," + str(oldprob_not) + "> ... New: <" + str(newprob/(newprob+ newprob_not)) + "," + str(newprob_not/(newprob + newprob_not)) + ">"
-				heatmap[t][x][y] = newprob/(newprob + newprob_not)
+				heatmap[t][newx][newy] = newprob/(newprob + newprob_not)
 				
 		t += 1
 	return heatmap

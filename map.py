@@ -18,9 +18,9 @@ from ast import literal_eval as make_tuple
 pygame.init()
 myfont = pygame.font.SysFont("monospace", 15)
 
-blockwidth = 8  # Drawing dimensions of block
-GridCols = 100
-GridRows = 100
+blockwidth = 30  # Drawing dimensions of block
+GridCols = 20
+GridRows = 20
 GameScreen = pygame.display.set_mode((GridCols*blockwidth+200,GridRows*blockwidth+34))
 
 agentx = 0
@@ -180,7 +180,7 @@ def drawScreen(GridSurface,HeatSurface,heat_toggle,t,location,transitions,sensin
 	
 	# Draw current agent location
 	if location != []:
-		pygame.draw.circle(GameScreen, (0,255,0), (location[t][0]*blockwidth+blockwidth/2+10,location[t][1]*blockwidth+blockwidth/2+10),int(blockwidth*.4), 0)
+		pygame.draw.circle(GameScreen, (0,255,0), (location[t][0]*blockwidth+blockwidth/2+10,location[t][1]*blockwidth+blockwidth/2+10),int(blockwidth*.25), 0)
 	
 	# Draw text
 	label = myfont.render("G = New Map, E = New Start, S = Save, L = Load", 1, (0,0,0))
@@ -437,8 +437,8 @@ def forwardAlgorithm(transition,sensing):
 					heatmap[t][x][y] = 0
 				else:	# Normal cell
 					#print "Normal cell"
-					newprob = 0.9
-					#heatmap[t][x][y] = 0.1 * heatmap[t-1][x][y]
+					newprob = 0.1
+					heatmap[t][new_x][new_y] = 0.9 * heatmap[t-1][x][y]
 				
 				# Apply prior belief
 				newprob_not = 1 - newprob
