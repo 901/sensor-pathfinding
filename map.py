@@ -18,7 +18,7 @@ from ast import literal_eval as make_tuple
 pygame.init()
 myfont = pygame.font.SysFont("monospace", 15)
 
-blockwidth = 6  # Drawing dimensions of block
+blockwidth = 8  # Drawing dimensions of block
 GridCols = 100
 GridRows = 100
 GameScreen = pygame.display.set_mode((GridCols*blockwidth+200,GridRows*blockwidth+34))
@@ -108,7 +108,7 @@ def drawGrid(myGridSurface):
 			if celltype == 'B':
 				pygame.draw.rect(myGridSurface, (40,40,40), (x*blockwidth+10,y*blockwidth+10,blockwidth,blockwidth), 0)
 				pygame.draw.rect(myGridSurface, (40,40,40), (x*blockwidth+10,y*blockwidth+10,blockwidth+1,blockwidth+1), 1)
-			elif celltype == 'N':
+			elif celltype == 'N': #or celltype == 'T' or celltype == 'H':
 				pygame.draw.rect(myGridSurface, (255,255,255), (x*blockwidth+10,y*blockwidth+10,blockwidth,blockwidth), 0)
 				pygame.draw.rect(myGridSurface, (100,100,100), (x*blockwidth+10,y*blockwidth+10,blockwidth+1,blockwidth+1), 1)
 			elif celltype == 'T':
@@ -138,11 +138,16 @@ def drawHeatmap(HeatSurface,GridSurface,heatmap,time):
 	HeatSurface = GridSurface.copy()
 	RectSurface = pygame.Surface((blockwidth,blockwidth))
 	RectSurface.fill((255,0,0))
+	RectSurface.set_alpha(128)
 	for x in range(len(grid)):
 		for y in range(len(grid[x])):
-			myalpha = 100*heatmap[x][y]+50
-			RectSurface.set_alpha(myalpha)
-			HeatSurface.blit(RectSurface,(x*blockwidth+10,y*blockwidth+10))
+			if grid[x][y].getType() != 'B':
+				#myalpha = 100*heatmap[x][y]+50
+				#RectSurface.set_alpha(myalpha)
+				
+				RectSurface.fill((heatmap[x][y]*255,0,255*(1-heatmap[x][y])))
+				
+				HeatSurface.blit(RectSurface,(x*blockwidth+10,y*blockwidth+10))
 
 	#label = myfont.render(str(time), 1, (0,0,0))
 	#HeatSurface.blit(label, (10+blockwidth*GridCols+20, 160))
@@ -150,7 +155,7 @@ def drawHeatmap(HeatSurface,GridSurface,heatmap,time):
 	return HeatSurface
 	
 # Draw Screen
-def drawScreen(GridSurface,HeatSurface,t,location,transitions,sensing,start_x,start_y,goal_x,goal_y):
+def drawScreen(GridSurface,HeatSurface,heat_toggle,t,location,transitions,sensing,start_x,start_y,goal_x,goal_y):
 
 	# Draw grid and cursor
 	GameScreen.blit(GridSurface,(0,0))
@@ -162,7 +167,8 @@ def drawScreen(GridSurface,HeatSurface,t,location,transitions,sensing,start_x,st
 	
 	# Draw heatmap
 	#HeatSurface.set_alpha(128)
-	GameScreen.blit(HeatSurface,(0,0))
+	if heat_toggle == True:
+		GameScreen.blit(HeatSurface,(0,0))
 	
 	'''print "Sleeping"
 	time.sleep(2)
@@ -174,7 +180,7 @@ def drawScreen(GridSurface,HeatSurface,t,location,transitions,sensing,start_x,st
 	
 	# Draw current agent location
 	if location != []:
-		pygame.draw.circle(GameScreen, (0,255,0), (location[t][0]*blockwidth+blockwidth/2+10,location[t][1]*blockwidth+blockwidth/2+10),blockwidth/2, 0)
+		pygame.draw.circle(GameScreen, (0,255,0), (location[t][0]*blockwidth+blockwidth/2+10,location[t][1]*blockwidth+blockwidth/2+10),int(blockwidth*.4), 0)
 	
 	# Draw text
 	label = myfont.render("G = New Map, E = New Start, S = Save, L = Load", 1, (0,0,0))
@@ -437,7 +443,7 @@ def forwardAlgorithm(transition,sensing):
 				# Apply prior belief
 				newprob_not = 1 - newprob
 				
-				newprob = newprob * oldprob + newprob_not + oldprob_not
+				newprob = newprob * oldprob + newprob_not * oldprob_not
 				newprob_not = newprob_not * oldprob + (1 - newprob_not) * oldprob_not
 				
 				# Multiply by observation model
@@ -496,6 +502,8 @@ GridSurface = drawGrid(GridSurface)
 heatmap = initHeatMap()
 HeatSurface = pygame.Surface(GameScreen.get_size())
 HeatSurface = drawHeatmap(HeatSurface,GridSurface,heatmap[1],1)
+
+heatmap_toggle = False
 
 # Initialize truth data
 location_truth = []
@@ -645,6 +653,11 @@ while(running):
 				print "Heat maps generated"
 			elif event.key == pygame.K_q:		# get error calculation for filtering (Question E)
 				myerror = error_filtering(heatmap,location_truth)
+			elif event.key == pygame.K_z:		# drawing toggle for heatmap
+				if heatmap_toggle == False:
+					heatmap_toggle = True
+				else:
+					heatmap_toggle = False
 
 	# Draw Screen
-	drawScreen(GridSurface,HeatSurface,test_time,location_truth,transition_truth,sensing_truth,start_x,start_y,goal_x,goal_y)
+	drawScreen(GridSurface,HeatSurface,heatmap_toggle,test_time,location_truth,transition_truth,sensing_truth,start_x,start_y,goal_x,goal_y)
