@@ -122,7 +122,7 @@ def drawGrid(myGridSurface):
 	return myGridSurface
 
 # Draw Heatmap
-def drawHeatmap(HeatSurface,GridSurface,heatmap,time):
+'''def drawHeatmap(HeatSurface,GridSurface,heatmap,time):
 	HeatSurface.blit(GridSurface,(0,0))
 	for x in range(len(grid)):
 		for y in range(len(grid[x])):
@@ -132,17 +132,41 @@ def drawHeatmap(HeatSurface,GridSurface,heatmap,time):
 	#label = myfont.render(str(time), 1, (0,0,0))
 	#HeatSurface.blit(label, (10+blockwidth*GridCols+20, 160))
 	HeatSurface = HeatSurface.convert()
+	return HeatSurface'''
+	
+def drawHeatmap(HeatSurface,GridSurface,heatmap,time):
+	HeatSurface = GridSurface.copy()
+	RectSurface = pygame.Surface((blockwidth,blockwidth))
+	RectSurface.fill((255,0,0))
+	for x in range(len(grid)):
+		for y in range(len(grid[x])):
+			myalpha = 100*heatmap[x][y]+50
+			RectSurface.set_alpha(myalpha)
+			HeatSurface.blit(RectSurface,(x*blockwidth+10,y*blockwidth+10))
+
+	#label = myfont.render(str(time), 1, (0,0,0))
+	#HeatSurface.blit(label, (10+blockwidth*GridCols+20, 160))
+	HeatSurface = HeatSurface.convert()
 	return HeatSurface
+	
 # Draw Screen
-def drawScreen(GridSurface,HeatSurface,time,location,transitions,sensing,start_x,start_y,goal_x,goal_y):
+def drawScreen(GridSurface,HeatSurface,t,location,transitions,sensing,start_x,start_y,goal_x,goal_y):
 
 	# Draw grid and cursor
 	GameScreen.blit(GridSurface,(0,0))
 	#pygame.draw.rect(GameScreen, (255,0,0), (cursor_x*blockwidth+9,cursor_y*blockwidth+9,blockwidth+2,blockwidth+2), 2)
 	
+	'''print "Sleeping"
+	time.sleep(2)
+	print "Done sleeping"'''
+	
 	# Draw heatmap
-	HeatSurface.set_alpha(128)
+	#HeatSurface.set_alpha(128)
 	GameScreen.blit(HeatSurface,(0,0))
+	
+	'''print "Sleeping"
+	time.sleep(2)
+	print "Done sleeping"'''
 	
 	# Draw start and end point
 	#pygame.draw.circle(GameScreen, (255,0,0), (start_x*blockwidth+blockwidth/2+10,start_y*blockwidth+blockwidth/2+10),blockwidth/2, 0)
@@ -150,24 +174,24 @@ def drawScreen(GridSurface,HeatSurface,time,location,transitions,sensing,start_x
 	
 	# Draw current agent location
 	if location != []:
-		pygame.draw.circle(GameScreen, (0,255,0), (location[time][0]*blockwidth+blockwidth/2+10,location[time][1]*blockwidth+blockwidth/2+10),blockwidth/2, 0)
+		pygame.draw.circle(GameScreen, (0,255,0), (location[t][0]*blockwidth+blockwidth/2+10,location[t][1]*blockwidth+blockwidth/2+10),blockwidth/2, 0)
 	
 	# Draw text
 	label = myfont.render("G = New Map, E = New Start, S = Save, L = Load", 1, (0,0,0))
 	GameScreen.blit(label, (20, blockwidth*GridRows+14))
 	
 	# Draw time
-	label = myfont.render("t = "+str(time), 1, (0,0,0))
+	label = myfont.render("t = "+str(t), 1, (0,0,0))
 	GameScreen.blit(label, (10+blockwidth*GridCols+20, 30))
 
 	# Draw transition
 	if transitions != []:
-		label = myfont.render("Action: "+str(transitions[time]), 1, (0,0,0))
+		label = myfont.render("Action: "+str(transitions[t]), 1, (0,0,0))
 		GameScreen.blit(label, (10+blockwidth*GridCols+20, 50))
 	
 	# Draw sensing
 	if sensing != []:
-		label = myfont.render("Sense: "+str(sensing[time]), 1, (0,0,0))
+		label = myfont.render("Sense: "+str(sensing[t]), 1, (0,0,0))
 		GameScreen.blit(label, (10+blockwidth*GridCols+20, 70))
 	
 	# Draw screen
