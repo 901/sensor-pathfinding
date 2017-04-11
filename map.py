@@ -134,7 +134,7 @@ def drawHeatmap(HeatSurface,GridSurface,heatmap,time):
 	HeatSurface = HeatSurface.convert()
 	return HeatSurface
 # Draw Screen
-def drawScreen(GridSurface,HeatSurface,time,transitions,sensing,start_x,start_y,goal_x,goal_y):
+def drawScreen(GridSurface,HeatSurface,time,location,transitions,sensing,start_x,start_y,goal_x,goal_y):
 
 	# Draw grid and cursor
 	GameScreen.blit(GridSurface,(0,0))
@@ -145,8 +145,12 @@ def drawScreen(GridSurface,HeatSurface,time,transitions,sensing,start_x,start_y,
 	GameScreen.blit(HeatSurface,(0,0))
 	
 	# Draw start and end point
-	pygame.draw.circle(GameScreen, (255,0,0), (start_x*blockwidth+blockwidth/2+10,start_y*blockwidth+blockwidth/2+10),blockwidth/2, 0)
-	pygame.draw.circle(GameScreen, (0,255,0), (goal_x*blockwidth+blockwidth/2+10,goal_y*blockwidth+blockwidth/2+10),blockwidth/2, 0)
+	#pygame.draw.circle(GameScreen, (255,0,0), (start_x*blockwidth+blockwidth/2+10,start_y*blockwidth+blockwidth/2+10),blockwidth/2, 0)
+	#pygame.draw.circle(GameScreen, (0,255,0), (goal_x*blockwidth+blockwidth/2+10,goal_y*blockwidth+blockwidth/2+10),blockwidth/2, 0)
+	
+	# Draw current agent location
+	if location != []:
+		pygame.draw.circle(GameScreen, (0,255,0), (location[time][0]*blockwidth+blockwidth/2+10,location[time][1]*blockwidth+blockwidth/2+10),blockwidth/2, 0)
 	
 	# Draw text
 	label = myfont.render("G = New Map, E = New Start, S = Save, L = Load", 1, (0,0,0))
@@ -542,6 +546,7 @@ while(running):
 					start_x = new_start[0]
 					start_y = new_start[1]
 					
+					location_truth.append(new_start)
 					# Get true location data
 					for y in range(0,100):
 						location_truth.append(make_tuple(truthfile.readline()))
@@ -577,4 +582,4 @@ while(running):
 				print "Heat maps generated"
 
 	# Draw Screen
-	drawScreen(GridSurface,HeatSurface,test_time,transition_truth,sensing_truth,start_x,start_y,goal_x,goal_y)
+	drawScreen(GridSurface,HeatSurface,test_time,location_truth,transition_truth,sensing_truth,start_x,start_y,goal_x,goal_y)
