@@ -18,9 +18,9 @@ from ast import literal_eval as make_tuple
 pygame.init()
 myfont = pygame.font.SysFont("monospace", 15)
 
-blockwidth = 30  # Drawing dimensions of block
-GridCols = 20
-GridRows = 20
+blockwidth = 8  # Drawing dimensions of block
+GridCols = 100
+GridRows = 100
 GameScreen = pygame.display.set_mode((GridCols*blockwidth+200,GridRows*blockwidth+34))
 
 agentx = 0
@@ -177,6 +177,15 @@ def drawScreen(GridSurface,HeatSurface,heat_toggle,t,location,transitions,sensin
 	# Draw start and end point
 	#pygame.draw.circle(GameScreen, (255,0,0), (start_x*blockwidth+blockwidth/2+10,start_y*blockwidth+blockwidth/2+10),blockwidth/2, 0)
 	#pygame.draw.circle(GameScreen, (0,255,0), (goal_x*blockwidth+blockwidth/2+10,goal_y*blockwidth+blockwidth/2+10),blockwidth/2, 0)
+	
+	# Draw path
+	if location != []:
+		check_t = 1
+		old_coord = location[0]
+		while check_t <= t:
+			pygame.draw.line(GameScreen, (0,220,0), (blockwidth*old_coord[0]+10+blockwidth/2,blockwidth*old_coord[1]+10+blockwidth/2), (blockwidth*location[check_t][0]+10+blockwidth/2,blockwidth*location[check_t][1]+10+blockwidth/2), 2)
+			old_coord = location[check_t]
+			check_t += 1
 	
 	# Draw current agent location
 	if location != []:
@@ -435,6 +444,7 @@ def forwardAlgorithm(transition,sensing):
 					newprob = 1
 				elif grid[x][y].getType() == 'B':		# On a wall
 					heatmap[t][x][y] = 0
+					continue
 				else:	# Normal cell
 					#print "Normal cell"
 					newprob = 0.1
